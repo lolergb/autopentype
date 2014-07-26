@@ -23,4 +23,36 @@ conf_features    = {
 				'init'             : '# Init case ligatures',
 				'end'              : '# End case ligatures'
 				},
+		# Subscript
+		'subs' :{
+				'name'             : 'subs',
+				'expresionRegular' : '.*\.subs',
+				'nameGroup'        : ['subs1', 'subs2'],
+				'init'             : '# Init subs',
+				'end'              : '# End subs'
+				},
+		# Subscript
+		'sups' :{
+				'name'             : 'sups',
+				'expresionRegular' : '.*\.sups',
+				'nameGroup'        : ['sups1', 'sups2'],
+				'init'             : '# Init sups',
+				'end'              : '# End sups'
+				},
+		# Scientific Inferiors
+		'sinf' :{
+				'name'             : 'sinf',
+				'expresionRegular' : '.*\.subs',
+				'nameGroup'        : ['subs1', 'subs2'],
+				'init'             : '# Init Scientific Inferiors',
+				'end'              : '# End Scientific Inferiors'
+				},
+		# Scientific Inferiors
+		'numr' :{
+				'name'             : 'numr',
+				'expresionRegular' : '.*\.numr',
+				'nameGroup'        : ['subs1', 'numr1'],
+				'init'             : '# Init Numerators',
+				'end'              : '# End Numerators'
+				},
 		}

@@ -1,6 +1,5 @@
-# -*- coding: UTF-8 -*-
-#
-# ----------------------------------------------------------------------------------
+'''Test'''
+
 #--- imports ----
 import sys
 import os.path
@@ -19,12 +18,15 @@ path             = currentFont.path
 pathFea          = "%s/features.fea" % (path)
 pathGroup        = "%s/groups.plist" % (path)
 
+saveListGroups   = {}
+
+
 
 #--- Generate basic ---
 class generateOpentype:
 
     #--- Atributtes
-    _debug = False
+    _debug = True
 
     def __init__(self):
         pass
@@ -85,7 +87,7 @@ class generateOpentype:
             if item == 'liga':
                 output += '%s%s' % (generateFeatureForGlyphs().generateFeature(), '\n')
             else:
-                output += '%s%s' %(generateFeatureForGroup().generateFeature(conf_features[item]['expresionRegular'], [conf_features[item]['init'], conf_features[item]['end']], conf_features[item]['nameGroup']), '\n')
+                output += '%s%s' %(generateFeatureForGroup().generateFeature(conf_features[item]['expresionRegular'], [conf_features[item]['init'], conf_features[item]['end']], conf_features[item]['nameGroup'], conf_features[item]['name']), '\n')
 
         generateOpentype().writeFea(output)
 
@@ -98,7 +100,8 @@ class generateFeatureForGlyphs:
     _expresionDefault     = conf_features['liga']['expresionRegular']
     _commentInitDefault   = conf_features['liga']['init']
     _commentEndDefault    = conf_features['liga']['end']
-
+    
+    
     # Generate one dicctionary with glyphs
     def searchGlyphs(self, expresionRegular):
 
@@ -139,6 +142,7 @@ class generateFeatureForGlyphs:
 class generateFeatureForGroup:
 
     #--- Attributes ---
+    _nameDefault          = conf_features['case']['name']
     _expresionDefault     = conf_features['case']['expresionRegular']
     _commentInitDefault   = conf_features['case']['init']
     _commentEndDefault    = conf_features['case']['end']
@@ -196,24 +200,27 @@ class generateFeatureForGroup:
 
 
     # name | expresion regular | comments
-    def generateFeature(self, expresionRegular = _expresionDefault, comments = [_commentInitDefault, _commentEndDefault], groupsNames = _groupsNames):
+    def generateFeature(self, expresionRegular = _expresionDefault, comments = [_commentInitDefault, _commentEndDefault], groupsNames = _groupsNames, name = _nameDefault):
 
         this         = generateFeatureForGroup()
         listGlyphs   = this.searchGlyphs(expresionRegular)
         groups       = this.generateBasicGroup(listGlyphs, groupsNames)
         groupName    = []
 
-
+        global saveListGroups
+        
         itemsFeature = ''
         newItemsFeature = ''
 
         for items in groups:
             for item in groups[items]:
-                newItemsFeature += '@%s = %s\n' % (item, groups[items][item])
+                if item not in saveListGroups:
+                    newItemsFeature += '@%s = %s\n' % (item, groups[items][item])
                 groupName.append(item)
-
-        initFeature  = '%s\nfeature %s {\n' % (comments[0], groups.iterkeys().next())
-        endFeature   = '} %s;\n%s\n' % (groups.iterkeys().next(), comments[1])
+                saveListGroups[item] = True
+                
+        initFeature  = '%s\nfeature %s {\n' % (comments[0], name)
+        endFeature   = '} %s;\n%s\n' % (name, comments[1])
         itemsFeature = '\tsub @%s by @%s;\n' % (groupName[0], groupName[1])
 
         outFeature = '%s\n%s%s%s' % (newItemsFeature, initFeature, itemsFeature, endFeature)
